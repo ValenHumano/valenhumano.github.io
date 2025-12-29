@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Página sencilla</title>
+    <style>
+        :root{
+            --bg:#f7f9fc; --card:#fff; --accent:#4f46e5; --muted:#6b7280;
+            --radius:10px; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        html,body{height:100%}
+        body{
+            margin:0; background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 100%);
+            color:#0f172a; display:flex; align-items:center; justify-content:center; padding:32px;
+        }
+        .container{width:100%;max-width:980px}
+        header{
+            display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
+        }
+        .logo{display:flex;gap:10px;align-items:center;font-weight:700;color:var(--accent)}
+        .logo .mark{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#4f46e5);box-shadow:0 6px 18px rgba(79,70,229,0.18)}
+        nav a{color:var(--muted);text-decoration:none;margin-left:16px;font-size:14px}
+        .card{
+            background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:0 6px 24px rgba(15,23,42,0.06);
+        }
+        .hero{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+        .hero .content{flex:1;min-width:260px}
+        h1{margin:0 0 8px;font-size:28px}
+        p.lead{margin:0 0 18px;color:var(--muted)}
+        .cta{background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;border:0;cursor:pointer}
+        .illustration{width:260px;flex-shrink:0}
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
+        .feature{
+            background:linear-gradient(180deg,#fff,#fbfdff);padding:14px;border-radius:10px;border:1px solid rgba(15,23,42,0.03);
+        }
+        footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+        form{display:flex;gap:8px;margin-top:12px}
+        input[type="email"]{flex:1;padding:10px;border-radius:8px;border:1px solid #e6edf3}
+        @media (max-width:520px){h1{font-size:22px}.illustration{width:180px}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo" aria-hidden="true">
+                <div class="mark"></div>
+                WebGift
+            </div>
+            <nav>
+                <a href="#">Inicio</a>
+                <a href="#">Características</a>
+                <a href="#">Contacto</a>
+            </nav>
+        </header>
+
+        <main class="card" role="main">
+            <section class="hero">
+                <div class="content">
+                    <h1>Una página web sencilla y limpia</h1>
+                    <p class="lead">Plantilla mínima para empezar un proyecto: sección principal, características y un pequeño formulario de contacto.</p>
+                    <div>
+                        <button class="cta" id="ctaBtn">Comenzar</button>
+                    </div>
+
+                    <div class="grid" aria-label="Características">
+                        <div class="feature">
+                            <strong>Diseño responsivo</strong>
+                            <div style="color:var(--muted);margin-top:6px;font-size:13px">Se adapta a móviles y escritorio.</div>
+                        </div>
+                        <div class="feature">
+                            <strong>Fácil de editar</strong>
+                            <div style="color:var(--muted);margin-top:6px;font-size:13px">Colores y contenido en un solo archivo.</div>
+                        </div>
+                        <div class="feature">
+                            <strong>Accesible</strong>
+                            <div style="color:var(--muted);margin-top:6px;font-size:13px">Etiquetas semánticas y buen contraste.</div>
+                        </div>
+                        <div class="feature">
+                            <strong>Ligera</strong>
+                            <div style="color:var(--muted);margin-top:6px;font-size:13px">Sin dependencias externas.</div>
+                        </div>
+                    </div>
+
+                    <form id="contact" aria-label="Formulario de contacto" onsubmit="return false;">
+                        <input type="email" id="email" placeholder="Tu email" required />
+                        <button class="cta" id="send">Enviar</button>
+                    </form>
+                </div>
+
+                <div class="illustration" aria-hidden="true">
+                    <svg width="100%" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                        <rect rx="14" width="200" height="160" fill="#eef2ff"/>
+                        <circle cx="60" cy="60" r="24" fill="#7c3aed"/>
+                        <rect x="100" y="28" width="72" height="16" rx="6" fill="#4f46e5"/>
+                        <rect x="100" y="58" width="52" height="10" rx="4" fill="#c7d2fe"/>
+                        <rect x="100" y="76" width="72" height="10" rx="4" fill="#e9eefc"/>
+                    </svg>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            Hecho con HTML y CSS — ejemplo simple. <span id="status" style="margin-left:8px"></span>
+        </footer>
+    </div>
+
+    <script>
+        // Interacciones simples
+        document.getElementById('ctaBtn').addEventListener('click', function(){
+            document.getElementById('email').focus();
+        });
+        document.getElementById('send').addEventListener('click', function(e){
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const status = document.getElementById('status');
+            if(!email){
+                status.textContent = 'Introduce un email válido.';
+                return;
+            }
+            status.textContent = 'Gracias — aviso simulado enviado.';
+            // Aquí puedes conectar con tu backend (fetch/AJAX) si lo deseas.
+        });
+    </script>
+</body>
+</html>
