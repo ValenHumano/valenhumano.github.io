@@ -191,46 +191,106 @@
 
         .butterfly, .flower, .sparkle {
             position: absolute;
-            animation-duration: 8s;
             animation-timing-function: ease-in-out;
             animation-iteration-count: infinite;
-            transition: all 0.5s ease;
+            transition: all 0.4s ease;
         }
 
         .butterfly {
             font-size: 1.5rem;
-            animation-name: gentle-flutter;
-            opacity: 0.4;
+            opacity: 0.6;
+        }
+
+        .butterfly:nth-child(1) {
+            animation: butterfly-pattern-1 6s ease-in-out infinite;
+        }
+
+        .butterfly:nth-child(2) {
+            animation: butterfly-pattern-2 8s ease-in-out infinite;
+            animation-delay: -2s;
         }
 
         .flower {
             font-size: 1.2rem;
             animation-name: gentle-fall;
+            animation-duration: 10s;
             opacity: 0.3;
         }
 
         .sparkle {
             font-size: 0.8rem;
             animation-name: gentle-twinkle;
+            animation-duration: 3s;
             opacity: 0.5;
         }
 
-        @keyframes gentle-flutter {
-            0%, 100% { 
-                transform: translateX(0) translateY(0) rotate(0deg); 
-                opacity: 0.2;
-            }
-            25% { 
-                transform: translateX(15px) translateY(-8px) rotate(3deg); 
+        @keyframes butterfly-pattern-1 {
+            0% { 
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1); 
                 opacity: 0.4;
             }
-            50% { 
-                transform: translateX(0) translateY(-15px) rotate(0deg); 
+            15% { 
+                transform: translateX(40px) translateY(-25px) rotate(8deg) scale(1.1); 
+                opacity: 0.7;
+            }
+            30% { 
+                transform: translateX(10px) translateY(-45px) rotate(-5deg) scale(0.9); 
+                opacity: 0.8;
+            }
+            45% { 
+                transform: translateX(-30px) translateY(-20px) rotate(12deg) scale(1.2); 
                 opacity: 0.6;
             }
+            60% { 
+                transform: translateX(-60px) translateY(10px) rotate(-8deg) scale(1); 
+                opacity: 0.7;
+            }
             75% { 
-                transform: translateX(-15px) translateY(-8px) rotate(-3deg); 
+                transform: translateX(-20px) translateY(30px) rotate(6deg) scale(1.1); 
+                opacity: 0.5;
+            }
+            90% { 
+                transform: translateX(20px) translateY(15px) rotate(-3deg) scale(0.95); 
+                opacity: 0.6;
+            }
+            100% { 
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1); 
                 opacity: 0.4;
+            }
+        }
+
+        @keyframes butterfly-pattern-2 {
+            0% { 
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.3;
+            }
+            20% { 
+                transform: translateX(-50px) translateY(-30px) rotate(-10deg) scale(1.3); 
+                opacity: 0.8;
+            }
+            35% { 
+                transform: translateX(-80px) translateY(5px) rotate(15deg) scale(0.8); 
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateX(-30px) translateY(40px) rotate(-7deg) scale(1.1); 
+                opacity: 0.9;
+            }
+            65% { 
+                transform: translateX(25px) translateY(60px) rotate(12deg) scale(1.2); 
+                opacity: 0.4;
+            }
+            80% { 
+                transform: translateX(70px) translateY(20px) rotate(-15deg) scale(0.9); 
+                opacity: 0.7;
+            }
+            95% { 
+                transform: translateX(35px) translateY(-10px) rotate(5deg) scale(1.05); 
+                opacity: 0.5;
+            }
+            100% { 
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.3;
             }
         }
 
@@ -607,7 +667,7 @@
 
         <header class="main-header">
             <h1 class="main-title">¡Feliz Cumpleaños Mi Amor!</h1>
-            <p class="main-subtitle">29 regalos especiales para mis 29 razones de amarte</p>
+            <p class="main-subtitle">29 cartas para mis 29 razones de amarte</p>
         </header>
 
         <div class="cards-grid" id="cardsGrid">
@@ -628,22 +688,70 @@
     <!-- FIREWORKS CONTAINER -->
     <div class="fireworks" id="fireworks"></div>
 
+    <!-- BACKGROUND MUSIC -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://www.soundjay.com/misc/sounds/you-re-beautiful.mp3" type="audio/mpeg">
+        <source src="you-re-beautiful.mp3" type="audio/mpeg">
+        <!-- Fallback para diferentes formatos -->
+        <source src="you-re-beautiful.ogg" type="audio/ogg">
+        <source src="you-re-beautiful.wav" type="audio/wav">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <!-- MUSIC CONTROLS -->
+    <div id="musicControls" style="
+        position: fixed; 
+        bottom: 20px; 
+        right: 20px; 
+        z-index: 1001; 
+        background: rgba(139, 92, 246, 0.9); 
+        border-radius: 50px; 
+        padding: 15px 20px; 
+        backdrop-filter: blur(10px);
+        border: 2px solid var(--gold);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        display: none;
+    ">
+        <button id="playPauseBtn" style="
+            background: none; 
+            border: none; 
+            color: white; 
+            font-size: 1.5rem; 
+            cursor: pointer;
+            margin-right: 10px;
+            transition: transform 0.2s ease;
+        " title="Reproducir/Pausar música">🎵</button>
+        <button id="volumeBtn" style="
+            background: none; 
+            border: none; 
+            color: white; 
+            font-size: 1.2rem; 
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        " title="Silenciar/Activar">🔊</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5" style="
+            margin-left: 10px;
+            width: 80px;
+            accent-color: var(--gold);
+        ">
+    </div>
+
     <script>
         // Card themes and content
         const cardThemes = [
+            {
+                title: "💕",
+                emoji: "",
+                description: "Nuestra vida juntos",
+                content: "Convivir contigo ha sido sin duda una experiencia maravillosa. Cada día a tu lado es una bendición que atesoro profundamente (o que valoró haber sobrevivido), sin dudas conocerte en cada detalle es algo increíble que adoro y apreció cada día.",
+                image: "b.png"
+            },
             {
                 title: "La Paz - Bolivia 🏔️",
                 emoji: "🏔️",
                 description: "Donde nos conocimos y comenzó nuestra historia",
                 content: "En las alturas de La Paz, entre montañas y cielos infinitos debajo de Illimani, casi muero, pero tu amor me salvó.",
                 image: "a.png"
-            },
-            {
-                title: "",
-                emoji: "",
-                description: "El amor que construimos juntos",
-                content: "Convivir contigo ha sido sin duda una experiencia maravillosa. Cada día a tu lado es una bendición que atesoro profundamente (o que valoró haber sobrevivido).",
-                image: "b.png"
             },
             {
                 title: "Amor💕",
@@ -859,6 +967,7 @@
                 document.getElementById('mainPage').style.display = 'block';
                 generateCards();
                 startFloatingElements();
+                showMusicControls();
             }
         }
 
@@ -960,21 +1069,71 @@
             }
         }
 
-        // Start floating elements animation - more subtle
+        // Start floating elements animation - more dynamic butterflies
         function startFloatingElements() {
-            const elements = document.querySelectorAll('.butterfly, .sparkle');
-            elements.forEach(element => {
-                // Movimiento más sutil y lento
+            const butterflies = document.querySelectorAll('.butterfly');
+            const sparkles = document.querySelectorAll('.sparkle');
+            
+            // Animate butterflies with more complex patterns
+            butterflies.forEach((butterfly, index) => {
+                let baseX = parseFloat(butterfly.style.left || '0');
+                let baseY = parseFloat(butterfly.style.top || '0');
+                let directionX = 1;
+                let directionY = 1;
+                let speed = 0.5 + Math.random() * 0.5; // Variable speed
+                
                 setInterval(() => {
-                    const currentLeft = parseFloat(element.style.left || '0');
-                    const currentTop = parseFloat(element.style.top || '0');
+                    // Create more natural flight patterns
+                    const time = Date.now() * 0.001; // Current time in seconds
+                    const waveX = Math.sin(time * speed + index) * 15;
+                    const waveY = Math.cos(time * speed * 1.3 + index) * 10;
                     
-                    const newLeft = Math.max(5, Math.min(90, currentLeft + (Math.random() - 0.5) * 10));
-                    const newTop = Math.max(10, Math.min(85, currentTop + (Math.random() - 0.5) * 8));
+                    // Add some random movement
+                    const randomX = (Math.random() - 0.5) * 20;
+                    const randomY = (Math.random() - 0.5) * 15;
                     
-                    element.style.left = newLeft + '%';
-                    element.style.top = newTop + '%';
-                }, 8000 + Math.random() * 4000); // Movimiento más lento
+                    // Calculate new position
+                    let newX = baseX + waveX + randomX * 0.3;
+                    let newY = baseY + waveY + randomY * 0.3;
+                    
+                    // Bounce off edges
+                    if (newX < 5 || newX > 90) {
+                        directionX *= -1;
+                        baseX = Math.max(5, Math.min(90, newX));
+                    }
+                    if (newY < 10 || newY > 80) {
+                        directionY *= -1;
+                        baseY = Math.max(10, Math.min(80, newY));
+                    }
+                    
+                    // Occasionally change base position for more dynamic movement
+                    if (Math.random() < 0.1) { // 10% chance every interval
+                        baseX += (Math.random() - 0.5) * 30 * directionX;
+                        baseY += (Math.random() - 0.5) * 20 * directionY;
+                        baseX = Math.max(5, Math.min(90, baseX));
+                        baseY = Math.max(10, Math.min(80, baseY));
+                    }
+                    
+                    // Apply smooth transitions
+                    butterfly.style.transition = 'all 2s cubic-bezier(0.4, 0, 0.2, 1)';
+                    butterfly.style.left = Math.max(5, Math.min(90, newX)) + '%';
+                    butterfly.style.top = Math.max(10, Math.min(80, newY)) + '%';
+                    
+                }, 2000 + Math.random() * 2000); // Variable timing
+            });
+            
+            // Sparkles with subtle movement
+            sparkles.forEach(sparkle => {
+                setInterval(() => {
+                    const currentLeft = parseFloat(sparkle.style.left || '0');
+                    const currentTop = parseFloat(sparkle.style.top || '0');
+                    
+                    const newLeft = Math.max(5, Math.min(90, currentLeft + (Math.random() - 0.5) * 8));
+                    const newTop = Math.max(10, Math.min(85, currentTop + (Math.random() - 0.5) * 6));
+                    
+                    sparkle.style.left = newLeft + '%';
+                    sparkle.style.top = newTop + '%';
+                }, 10000 + Math.random() * 5000); // Slower movement for sparkles
             });
         }
 
@@ -997,11 +1156,93 @@
         updateCountdown();
         setInterval(updateCountdown, 1000);
 
+        // Music functionality
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const musicControls = document.getElementById('musicControls');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const volumeBtn = document.getElementById('volumeBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+
+        // Set initial volume
+        backgroundMusic.volume = 0.5;
+
+        // Show music controls when main page is displayed
+        function showMusicControls() {
+            musicControls.style.display = 'block';
+            // Try to play music automatically (might be blocked by browser policy)
+            backgroundMusic.play().catch(e => {
+                console.log('Autoplay bloqueado por el navegador:', e);
+                playPauseBtn.textContent = '▶️';
+            });
+        }
+
+        // Play/Pause functionality
+        playPauseBtn.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().then(() => {
+                    playPauseBtn.textContent = '⏸️';
+                }).catch(e => {
+                    console.log('Error al reproducir:', e);
+                });
+            } else {
+                backgroundMusic.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        });
+
+        // Volume control
+        volumeSlider.addEventListener('input', (e) => {
+            backgroundMusic.volume = e.target.value;
+            updateVolumeIcon();
+        });
+
+        volumeBtn.addEventListener('click', () => {
+            if (backgroundMusic.volume > 0) {
+                backgroundMusic.volume = 0;
+                volumeSlider.value = 0;
+            } else {
+                backgroundMusic.volume = 0.5;
+                volumeSlider.value = 0.5;
+            }
+            updateVolumeIcon();
+        });
+
+        function updateVolumeIcon() {
+            if (backgroundMusic.volume === 0) {
+                volumeBtn.textContent = '🔇';
+            } else if (backgroundMusic.volume < 0.5) {
+                volumeBtn.textContent = '🔉';
+            } else {
+                volumeBtn.textContent = '🔊';
+            }
+        }
+
+        // Update play button when music ends or starts
+        backgroundMusic.addEventListener('play', () => {
+            playPauseBtn.textContent = '⏸️';
+        });
+
+        backgroundMusic.addEventListener('pause', () => {
+            playPauseBtn.textContent = '▶️';
+        });
+
+        // Hover effects for music controls
+        const musicButtons = document.querySelectorAll('#musicControls button');
+        musicButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'scale(1.1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
         // For testing - uncomment to skip countdown
         // document.getElementById('countdownPage').style.display = 'none';
         // document.getElementById('mainPage').style.display = 'block';
         // generateCards();
         // startFloatingElements();
+        // showMusicControls();
     </script>
 </body>
 </html>
