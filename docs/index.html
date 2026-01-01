@@ -28,6 +28,7 @@
             height: 100%;
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         /* COUNTDOWN PAGE STYLES */
@@ -443,6 +444,16 @@
             height: 100%;
             object-fit: cover;
             border-radius: 20px;
+            transition: opacity 0.3s ease;
+            background: linear-gradient(135deg, var(--purple-fade), rgba(255, 255, 255, 0.05));
+        }
+
+        .card-image img.loading {
+            opacity: 0.3;
+        }
+
+        .card-image img.loaded {
+            opacity: 1;
         }
 
         .card-title {
@@ -616,6 +627,59 @@
         .show {
             display: block !important;
         }
+
+        .card-image img.loading {
+            opacity: 0.3;
+        }
+
+        .card-image img.loaded {
+            opacity: 1;
+        }
+
+        /* Optimización de scroll */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            will-change: scroll-position;
+        }
+
+        .card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            will-change: transform;
+            transform: translateZ(0); /* Forzar aceleración por hardware */
+        }
+
+        .card-title {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .card-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -689,12 +753,13 @@
     <div class="fireworks" id="fireworks"></div>
 
     <!-- BACKGROUND MUSIC -->
-    <audio id="backgroundMusic" loop>
-        <source src="https://www.soundjay.com/misc/sounds/you-re-beautiful.mp3" type="audio/mpeg">
+    <audio id="backgroundMusic" loop preload="auto" crossorigin="anonymous">
+        <!-- URL más confiable para You're Beautiful -->
+        <source src="https://archive.org/download/JamesBluntYoureBeautiful/James%20Blunt%20-%20You%27re%20Beautiful.mp3" type="audio/mpeg">
+        <!-- Fallback local si tienes el archivo -->
         <source src="you-re-beautiful.mp3" type="audio/mpeg">
-        <!-- Fallback para diferentes formatos -->
-        <source src="you-re-beautiful.ogg" type="audio/ogg">
-        <source src="you-re-beautiful.wav" type="audio/wav">
+        <!-- Alternativa: usar una URL de SoundCloud o YouTube (con permisos) -->
+        <source src="https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3" type="audio/mpeg">
         Tu navegador no soporta el elemento de audio.
     </audio>
 
@@ -1001,7 +1066,7 @@
             }
         }
 
-        // Generate cards
+        // Generate cards with optimized image loading
         function generateCards() {
             const grid = document.getElementById('cardsGrid');
             grid.innerHTML = '';
@@ -1009,10 +1074,17 @@
             cardThemes.forEach((theme, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                
+                // Pre-crear el contenido con loading lazy para mejor rendimiento
                 card.innerHTML = `
                     <div class="card-content">
                         <div class="card-image">
-                            <img src="${theme.image}" alt="${theme.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="${theme.image}" 
+                                 alt="${theme.title}" 
+                                 loading="lazy" 
+                                 class="loading"
+                                 onload="this.classList.remove('loading');this.classList.add('loaded');"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div style="display:none; font-size: 3.5rem;">${theme.emoji}</div>
                         </div>
                         <h3 class="card-title">${theme.title}</h3>
@@ -1022,6 +1094,12 @@
                 
                 card.addEventListener('click', () => openModal(theme));
                 grid.appendChild(card);
+                
+                // Pre-cargar imágenes importantes (las primeras 6)
+                if (index < 6) {
+                    const img = new Image();
+                    img.src = theme.image;
+                }
             });
         }
 
@@ -1156,7 +1234,7 @@
         updateCountdown();
         setInterval(updateCountdown, 1000);
 
-        // Music functionality
+        // Music functionality - Mejorada
         const backgroundMusic = document.getElementById('backgroundMusic');
         const musicControls = document.getElementById('musicControls');
         const playPauseBtn = document.getElementById('playPauseBtn');
@@ -1164,29 +1242,52 @@
         const volumeSlider = document.getElementById('volumeSlider');
 
         // Set initial volume
-        backgroundMusic.volume = 0.5;
+        backgroundMusic.volume = 0.3; // Volumen más bajo inicialmente
+
+        // Better music loading
+        backgroundMusic.addEventListener('canplaythrough', () => {
+            console.log('Audio ready to play');
+        });
+
+        backgroundMusic.addEventListener('error', (e) => {
+            console.log('Error loading audio:', e);
+            // Si falla, intentar con audio de fallback o mostrar mensaje
+            playPauseBtn.textContent = '🎵';
+            playPauseBtn.title = 'Audio no disponible';
+        });
 
         // Show music controls when main page is displayed
         function showMusicControls() {
             musicControls.style.display = 'block';
-            // Try to play music automatically (might be blocked by browser policy)
-            backgroundMusic.play().catch(e => {
-                console.log('Autoplay bloqueado por el navegador:', e);
-                playPauseBtn.textContent = '▶️';
-            });
+            
+            // Intentar reproducir solo después de interacción del usuario
+            setTimeout(() => {
+                backgroundMusic.play().then(() => {
+                    playPauseBtn.textContent = '⏸️';
+                    console.log('Music started successfully');
+                }).catch(e => {
+                    console.log('Autoplay blocked or error:', e);
+                    playPauseBtn.textContent = '▶️';
+                    playPauseBtn.title = 'Haz clic para reproducir música';
+                });
+            }, 1000); // Esperar 1 segundo antes de intentar reproducir
         }
 
-        // Play/Pause functionality
+        // Play/Pause functionality - Mejorada
         playPauseBtn.addEventListener('click', () => {
             if (backgroundMusic.paused) {
                 backgroundMusic.play().then(() => {
                     playPauseBtn.textContent = '⏸️';
+                    playPauseBtn.title = 'Pausar música';
                 }).catch(e => {
-                    console.log('Error al reproducir:', e);
+                    console.log('Error playing music:', e);
+                    playPauseBtn.textContent = '❌';
+                    playPauseBtn.title = 'Error reproduciendo música';
                 });
             } else {
                 backgroundMusic.pause();
                 playPauseBtn.textContent = '▶️';
+                playPauseBtn.title = 'Reproducir música';
             }
         });
 
